@@ -1,1 +1,3 @@
 Pipfile.lock
+__pycache__
+airplane_sim/__pycache__

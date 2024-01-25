@@ -6,6 +6,13 @@ name = "pypi"
 [packages]
 matplotlib = "*"
 numpy = "*"
+scipy = "*"
+pyqtgraph = "*"
+pyqt6 = "*"
+pyopengl = "*"
+pynput = "*"
+pillow = "*"
+opencv-python = "*"
 
 [dev-packages]
 

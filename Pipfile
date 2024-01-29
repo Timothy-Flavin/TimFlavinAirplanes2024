@@ -4,17 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-matplotlib = "*"
 numpy = "*"
 scipy = "*"
+matplotlib = "*"
 pyqtgraph = "*"
 pyqt6 = "*"
 pyopengl = "*"
 pynput = "*"
-pillow = "*"
-opencv-python = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.11"
+python_version = "3.10"

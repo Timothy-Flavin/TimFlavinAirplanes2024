@@ -82,42 +82,68 @@ class DrawMav:
             Points that define the mav, and the colors of the triangular mesh
             Define the points on the mav following information in Appendix C.3
         """
+        fuse_l1 = 0.7
+        fuse_l2 = 0.4
+        fuse_h  = 0.5
+
+        fuse_l3 = 2.0
+
+        wing_l = 0.8
+        wing_w = 2.4
+
+        tail_wing_l = 0.4
+        tail_wing_w = 1.2
+        tail_h = 0.5
         # points are in XYZ coordinates
         #   define the points on the mav according to Appendix C.3
         points = self.unit_length * np.array([
-            [1, 1, 0],  # point 1 [0]
-            [1, -1, 0],  # point 2 [1]
-            [-1, -1, 0],  # point 3 [2]
-            [-1, 1, 0],  # point 4 [3]
-            [1, 1, -2],  # point 5 [4]
-            [1, -1, -2],  # point 6 [5]
-            [-1, -1, -2],  # point 7 [6]
-            [-1, 1, -2],  # point 8 [7]
-            [1.5, 1.5, 0],  # point 9 [8]
-            [1.5, -1.5, 0],  # point 10 [9]
-            [-1.5, -1.5, 0],  # point 11 [10]
-            [-1.5, 1.5, 0]  # point 12 [11]
+            [fuse_l1, 0, fuse_h/8],  # point 1 [0] nose
+            [fuse_l2, fuse_h/2, -fuse_h/2],  # point 2 [1]
+            [fuse_l2, -fuse_h/2, -fuse_h/2],  # point 3 [2]
+            [fuse_l2, -fuse_h/2, fuse_h/2],  # point 4 [3]
+            [fuse_l2, fuse_h/2, fuse_h/2],  # point 5 [4]
+
+            [-fuse_l3, 0, 0],  # point 6 end of fuse
+            
+            [0, wing_w/2, 0],  # point 7 front right wingtip
+            [-wing_l, wing_w/2, 0],  # point 8 back right
+            [-wing_l, -wing_w/2, 0],  # point 9 back left
+            [0, -wing_w/2, 0],  # point 10 front left
+
+            [-fuse_l3+tail_wing_l, tail_wing_w/2, 0],  # point 11 front right wingtip
+            [-fuse_l3, tail_wing_w/2, 0],  # point 12 back right
+            [-fuse_l3, -tail_wing_w/2, 0],  # point 13 back left
+            [-fuse_l3+tail_wing_l, -tail_wing_w/2, 0],  # point 14 front left
+
+            [-fuse_l3, 0, -tail_h], # point 15 tail top tip
+            [-fuse_l3+tail_wing_l, 0, 0], # point 16 tail top tip
             ]).T
         # point index that defines the mesh
         index = np.array([
-            [0, 1, 5],  # front 1
-            [0, 5, 4],  # front 2
-            [3, 2, 6],  # back 1
-            [3, 6, 7],  # back 2
-            [0, 4, 7],  # right 1
-            [0, 7, 3],  # right 2
-            [1, 5, 6],  # left 1
-            [1, 6, 2],  # left 2
-            [4, 5, 6],  # top 1
-            [4, 6, 7],  # top 2
-            [8, 9, 10],  # bottom 1
-            [8, 10, 11],  # bottom 2  
+            [0, 1, 2],  # nose top
+            [0, 2, 3],  # nose left
+            [0, 3, 4],  # nose bottom
+            [0, 4, 1],  # nose right
+            
+            [1, 2, 5],  # top body 
+            [2, 3, 5],  # left body 
+            [3, 4, 5],  # bottom body 
+            [4, 1, 5],  # right body 
+
+            [9, 6, 7],
+            [9, 7, 8],
+
+            [13, 10, 11],
+            [13, 11, 12],
+
+            [14, 5,  15]
             ])
         #   define the colors for each face of triangular mesh
         red = np.array([1., 0., 0., 1])
         green = np.array([0., 1., 0., 1])
         blue = np.array([0., 0., 1., 1])
         yellow = np.array([1., 1., 0., 1])
+        grey = np.array([0.5, 0.5, 0.5, 1])
         meshColors = np.empty((13, 3, 4), dtype=np.float32)
         meshColors[0] = yellow  # front 1
         meshColors[1] = yellow  # front 2
@@ -131,5 +157,6 @@ class DrawMav:
         meshColors[9] = red  # top 2
         meshColors[10] = green  # bottom 1
         meshColors[11] = green  # bottom 2
+        meshColors[12] = grey  # bottom 1
         return points, index, meshColors
 

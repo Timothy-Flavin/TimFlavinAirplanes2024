@@ -1,3 +1,5 @@
+# This is a repository of solved assignments by Tim Flavin from the book and codebase below
+
 # Small Unmanned Aircraft: Theory and Practice
 
 <img src="./bookcover.jpg" width="100" />

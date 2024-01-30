@@ -6,5 +6,5 @@ Repository Description: Airplane simulation in Python to support ECE 5353 Spring
 
 Releases:
 
-Release 0.0.2 - Updated mav_viewer and mavsim_chap2 to render basic mav
+Release 0.0.3 - Updated mav_viewer and mavsim_chap2 to render basic mav
 Release 0.0.1 – Initial commit. Setting up the repository

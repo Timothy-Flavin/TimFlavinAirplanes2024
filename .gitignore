@@ -1,5 +1,7 @@
 #hook's gitignore files
 Pipfile.lock
+*.DS_Store
+*.bak
 
 #tims gitignore files
 chap2

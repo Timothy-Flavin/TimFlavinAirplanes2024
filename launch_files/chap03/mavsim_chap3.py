@@ -57,11 +57,11 @@ print("Press 'Esc' to exit...")
 input("press enter to start")
 while sim_time < end_time:
     # ------- vary forces and moments to check dynamics -------------
-    fx = 0  # 10
+    fx = 400 # 10
     fy = 0  # 10
-    fz = 0#100  # 10
-    Mx = 0#0.1  # 0.1
-    My = 0  # 0.1
+    fz = -600#100  # 10
+    Mx = -0.1#0.1  # 0.1
+    My = 1  # 0.1
     Mz = 0  # 0.1
     forces_moments = np.array([[fx, fy, fz, Mx, My, Mz]]).T
 

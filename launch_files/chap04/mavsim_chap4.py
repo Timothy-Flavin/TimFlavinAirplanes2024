@@ -21,8 +21,9 @@ from viewers.mav_viewer import MavViewer
 from viewers.data_viewer import DataViewer
 from message_types.msg_delta import MsgDelta
 
+import pygame
 #quitter = QuitListener()
-
+pygame.init()
 VIDEO = False
 PLOTS = True
 ANIMATION = True
@@ -55,13 +56,61 @@ plot_time = sim_time
 end_time = 60
 
 # main simulation loop
+display = pygame.display.set_mode((300, 300))
 print("Press 'Esc' to exit...")
+keys = {"a":0,'d':0,'w':0,'s':0,'q':0,'e':0,'x':0,'z':0}
 while sim_time < end_time:
     # ------- set control surfaces -------------
     delta.elevator = -0.1248
     delta.aileron = 0.001836
     delta.rudder = -0.0003026
     delta.throttle = 0.6768
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+            
+        # checking if keydown event happened or not
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_d:
+                keys['d']=1
+            if event.key == pygame.K_a:
+                keys['a']=1
+            if event.key == pygame.K_w:
+                keys['w']=1
+            if event.key == pygame.K_s:
+                keys['s']=1
+            if event.key == pygame.K_q:
+                keys['q']=1
+            if event.key == pygame.K_e:
+                keys['e']=1
+            if event.key == pygame.K_z:
+                keys['z']=1
+            if event.key == pygame.K_x:
+                keys['x']=1
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_d:
+                keys['d']=0
+            if event.key == pygame.K_a:
+                keys['a']=0
+            if event.key == pygame.K_w:
+                keys['w']=0
+            if event.key == pygame.K_s:
+                keys['s']=0
+            if event.key == pygame.K_q:
+                keys['q']=0
+            if event.key == pygame.K_e:
+                keys['e']=0
+            if event.key == pygame.K_z:
+                keys['z']=0
+            if event.key == pygame.K_x:
+                keys['x']=0
+    
+        delta.elevator += 0.3*(int(keys['w'])-int(keys['s']))
+        delta.aileron += 0.3*(int(keys['e'])-int(keys['q']))
+        delta.rudder += 0.3*(int(keys['d'])-int(keys['a']))
+        delta.throttle += 0.2*(int(keys['z'])-int(keys['x']))
 
     # ------- physical system -------------
     current_wind = wind.update()  # get the new wind vector

@@ -11,6 +11,7 @@ pyqtgraph = "*"
 pyqt6 = "*"
 pyopengl = "*"
 pynput = "*"
+pygame = "*"
 
 [dev-packages]
 

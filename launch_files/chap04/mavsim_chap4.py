@@ -62,8 +62,8 @@ keys = {"a":0,'d':0,'w':0,'s':0,'q':0,'e':0,'x':0,'z':0}
 while sim_time < end_time:
     # ------- set control surfaces -------------
     delta.elevator = -0.1248
-    delta.aileron = 0.001836
-    delta.rudder = -0.0003026
+    delta.aileron = 0#0.001836
+    delta.rudder = 0#-0.0003026
     delta.throttle = 0.6768
 
     for event in pygame.event.get():
@@ -108,9 +108,9 @@ while sim_time < end_time:
                 keys['x']=0
     
         delta.elevator += 0.3*(int(keys['w'])-int(keys['s']))
-        delta.aileron += 0.3*(int(keys['e'])-int(keys['q']))
+        delta.aileron += 0.5*(int(keys['e'])-int(keys['q']))
         delta.rudder += 0.3*(int(keys['d'])-int(keys['a']))
-        delta.throttle += 0.2*(int(keys['z'])-int(keys['x']))
+        delta.throttle += 0.32*(int(keys['z'])-int(keys['x']))
 
     # ------- physical system -------------
     current_wind = wind.update()  # get the new wind vector

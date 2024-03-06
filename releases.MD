@@ -6,7 +6,7 @@ Repository Description: Airplane simulation in Python to support ECE 5353 Spring
 
 Releases:
 
-Release 0.0.7 - New engine model
+Release 0.0.7 - New engine model.  Good!  12/12
 
 Release 0.0.6 - Added aerodynamic and motor forces. additionally, added pygame key inputs for piloting video here: (https://youtu.be/p1LXcfen-_Y)
 

@@ -50,21 +50,33 @@ wind = WindSimulation(SIM.ts_simulation)
 mav = MavDynamics(SIM.ts_simulation)
 delta = MsgDelta()
 
+# create init parameters
+Va0 = 30
+alpha0 = 0.
+beta0 = 0.
+mav.initialize_velocity(Va0,alpha0,beta0)
+
 # initialize the simulation time
 sim_time = SIM.start_time
 plot_time = sim_time
 end_time = 60
 
+from timstuff import trim
+alpha, elevator, throttle = trim.compute_trim(mav,delta)
+mav.initialize_velocity(Va0,alpha,beta0)
 # main simulation loop
 display = pygame.display.set_mode((300, 300))
 print("Press 'Esc' to exit...")
 keys = {"a":0,'d':0,'w':0,'s':0,'q':0,'e':0,'x':0,'z':0}
 while sim_time < end_time:
+    
     # ------- set control surfaces -------------
-    delta.elevator = -0.1248
-    delta.aileron = 0#0.001836
-    delta.rudder = 0#-0.0003026
-    delta.throttle = 0.6768
+    delta.elevator = elevator#-0.1248
+    #if(abs(sim_time-3.0) < 0.01):
+        #delta.elevator+=0.3 # excite the modes
+    delta.aileron = 0# 0.001836
+    delta.rudder = 0# -0.0003026
+    delta.throttle = throttle# 0.6768
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

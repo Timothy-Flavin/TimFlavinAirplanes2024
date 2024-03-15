@@ -177,7 +177,8 @@ class MavDynamics(MavDynamicsForces):
         #thrust_prop = MAV.rho*(D**4)/(4*np.pi*np.pi) * (omega_p**2)*(MAV.C_T2*(J**2)+MAV.C_T1*J+MAV.C_T0)
         #torque_prop = MAV.rho*(D**5)/(4*np.pi*np.pi) * (omega_p**2)*(MAV.C_Q2*(J**2)+MAV.C_Q1*J+MAV.C_Q0)
         thrust_prop = 1/2*MAV.rho*MAV.S_prop*((MAV.K_motor*delta_t)**2 - Va**2)
-        return thrust_prop, 0#torque_prop
+        torque_prop=0
+        return thrust_prop, torque_prop
 
     def _update_true_state(self):
         # rewrite this function because we now have more information

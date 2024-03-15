@@ -15,11 +15,14 @@ sys.path.insert(0,os.fspath(Path(__file__).parents[2]))
 #from python_tools.quit_listener import QuitListener
 import pyqtgraph as pg
 import parameters.simulation_parameters as SIM
+from models.compute_models import compute_ss_model
 from models.mav_dynamics_control import MavDynamics
 from models.wind_simulation import WindSimulation
 from viewers.mav_viewer import MavViewer
 from viewers.data_viewer import DataViewer
 from message_types.msg_delta import MsgDelta
+import numpy as np
+import matplotlib.pyplot as plt
 
 import pygame
 #quitter = QuitListener()
@@ -68,12 +71,53 @@ mav.initialize_velocity(Va0,alpha,beta0)
 display = pygame.display.set_mode((300, 300))
 print("Press 'Esc' to exit...")
 keys = {"a":0,'d':0,'w':0,'s':0,'q':0,'e':0,'x':0,'z':0}
+
+print(mav._state.shape)
+trim_state = mav._state[:13]
+print(trim_state.shape)
+
+trim_input = MsgDelta(elevator=elevator,
+                        aileron=0,
+                        rudder=0,
+                        throttle=throttle)
+alon, blon, alat, blat = compute_ss_model(mav,trim_state,trim_input)
+print(f"{alon,blon,alat,blat}")
+eigs = np.linalg.eigvals(alon)
+print(eigs)
+# extract real part 
+x = [ele.real for ele in eigs] 
+# extract imaginary part 
+y = [ele.imag for ele in eigs] 
+
+for xi,yi in zip(x,y):
+    w = np.sqrt(xi**2+yi**2)
+    print(f"w: {w} and damping: {-xi/w}")
+
+#2 Reigs + abs|eig|^2 =2 damp w s + w^2 
+    
+# damp = R(eig) / w
+    
+# a = 1, b = 2damp*s, c = s^2
+
+#-2damp*s +- sqrt(4*damp^2*s^2 - 4*1*s^2)
+# -------------------------------------
+#                  2
+    
+#-2damp*s +- sqrt(4*s^2(damp^2-1))
+# -------------------------------------
+#                  2
+plt.scatter(x,y)
+plt.ylabel('Imaginary') 
+plt.xlabel('Real')
+#plt.show()
+input()
+
 while sim_time < end_time:
     
     # ------- set control surfaces -------------
     delta.elevator = elevator#-0.1248
-    #if(abs(sim_time-3.0) < 0.01):
-        #delta.elevator+=0.3 # excite the modes
+    if(abs(sim_time-3.0) < 0.1):
+        delta.elevator+=0.5 # excite the modes
     delta.aileron = 0# 0.001836
     delta.rudder = 0# -0.0003026
     delta.throttle = throttle# 0.6768

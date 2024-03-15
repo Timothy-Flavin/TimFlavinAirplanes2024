@@ -6,6 +6,8 @@ Repository Description: Airplane simulation in Python to support ECE 5353 Spring
 
 Releases:
 
+Release 0.0.9 - Chapter 5 part 2 modes calculation and dynamics https://youtu.be/-UonNWmxTEY
+
 Release 0.0.8 - Implemented trim function from class with alpha corrected https://youtu.be/6Ij8eEBn7D8 
 
 Release 0.0.7 - New engine model.  Good!  12/12

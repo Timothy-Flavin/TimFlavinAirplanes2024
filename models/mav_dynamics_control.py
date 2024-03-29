@@ -151,7 +151,7 @@ class MavDynamics(MavDynamicsForces):
         #print(f"fx_fz: {fx_fz}, thrust: {thrust_prop} + fg_b: {fg_b[0,0]} + fy {fy} + fg_b[1,0] {fg_b[1,0]}. fx_fz[1,0] {fx_fz[1,0]}+fg_b[2,0]{fg_b[2,0]}, l-torque_prop: {l}-{torque_prop}, m: {m}, n: {n}")
         #print(thrust_prop)
         #print(MAV.mass)
-        print(fx_fz)
+        #print(fx_fz)
         forces_moments = np.array([[fx_fz[0,0]+thrust_prop+fg_b[0,0], fy+fg_b[1,0],  fx_fz[1,0]+fg_b[2,0], l-torque_prop, m, n]]).T
         #print(forces_moments)
         #input()

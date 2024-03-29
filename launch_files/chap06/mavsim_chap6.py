@@ -10,7 +10,7 @@ mavsim_python
 import os, sys
 # insert parent directory at beginning of python search path
 from pathlib import Path
-sys.path.insert(0,os.fspath(Path(__file__).parents[1]))
+sys.path.insert(0,os.fspath(Path(__file__).parents[2]))
 # use QuitListener for Linux or PC <- doesn't work on Mac
 #from tools.quit_listener import QuitListener
 import numpy as np
@@ -19,11 +19,12 @@ import parameters.simulation_parameters as SIM
 from tools.signals import Signals
 from models.mav_dynamics_control import MavDynamics
 from models.wind_simulation import WindSimulation
-from control.autopilot import Autopilot
-# from control.autopilot_lqr import Autopilot
-# from control.autopilot_tecs import Autopilot
+from controllers.autopilot import Autopilot
+# from controllers.autopilot_lqr import Autopilot
+# from controllers.autopilot_tecs import Autopilot
 from viewers.mav_viewer import MavViewer
 from viewers.data_viewer import DataViewer
+from message_types.msg_delta import MsgDelta
 
 #quitter = QuitListener()
 
@@ -52,7 +53,6 @@ if PLOTS:
 # initialize elements of the architecture
 wind = WindSimulation(SIM.ts_simulation)
 mav = MavDynamics(SIM.ts_simulation)
-autopilot = Autopilot(SIM.ts_simulation)
 
 # autopilot commands
 from message_types.msg_autopilot import MsgAutopilot
@@ -74,19 +74,28 @@ course_command = Signals(dc_offset=np.radians(180),
 sim_time = SIM.start_time
 end_time = 100
 
+from timstuff.trim import do_trim
+delta=MsgDelta()
+delta = do_trim(mav,25,alpha=0)
+autopilot = Autopilot(delta,mav,SIM.ts_simulation)
+
+input_signal_elevator = Signals(amplitude=0.3, duration=0.3, start_time=5.0)
+input_signal_rudder = Signals(amplitude=0.3, duration=0.3, start_time=10.0)
 # main simulation loop
 print("Press 'Esc' to exit...")
 while sim_time < end_time:
 
     # -------autopilot commands-------------
-    commands.airspeed_command = Va_command.square(sim_time)
-    commands.course_command = course_command.square(sim_time)
+    commands.airspeed_command = 27#Va_command.square(sim_time)
+    commands.course_command = 0.04970031369887554#course_command.square(sim_time)
     commands.altitude_command = altitude_command.square(sim_time)
 
     # -------autopilot-------------
     estimated_state = mav.true_state  # uses true states in the control
     delta, commanded_state = autopilot.update(commands, estimated_state)
-
+    delta.elevator = delta.elevator+input_signal_elevator.impulse(time=sim_time)
+    delta.rudder = delta.rudder+input_signal_rudder.impulse(time=sim_time)
+    #delta,
     # -------physical system-------------
     current_wind = wind.update()  # get the new wind vector
     mav.update(delta, current_wind)  # propagate the MAV dynamics

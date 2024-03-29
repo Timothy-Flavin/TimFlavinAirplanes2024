@@ -44,3 +44,22 @@ def compute_parameters(mav:MavDynamics,delta:MsgDelta,delta_a:float):
   m = forces_moments[4]
   print(f"fx: {fx}, fz: {fz}, m: {m}")
   
+
+def do_trim(mav:MavDynamics,Va,alpha):
+  delta=MsgDelta()
+  Va0 = Va
+  alpha0 = alpha
+  beta0 = 0.0
+  mav.initialize_velocity(Va0,alpha0, beta0)
+  
+  #initialize simulation time
+  delta.elevator = -0.1248
+  delta.aileron=0.0
+  delta.rudder=0.0
+  delta.throttle = 0.6768
+
+  alpha,elevator,throttle = compute_trim(mav,delta)
+  mav.initialize_velocity(Va0,alpha,beta0)
+  delta.elevator = elevator
+  delta.throttle = throttle
+  return delta

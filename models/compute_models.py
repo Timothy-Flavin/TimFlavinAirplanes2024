@@ -232,6 +232,8 @@ def f_euler(mav, x_euler, delta):
     theta_dot = q*cos(phi)-r*sin(phi)
     psi_dot   = q*sin(phi)*sec(theta)+r*cos(phi)*sec(theta)
 
+    
+
     thing2 = MAV.rho*(mav._Va**2)*MAV.S_wing
     p_dot = MAV.gamma1*p*q-MAV.gamma2*q*r + 1/2*thing2*MAV.b*(MAV.C_p_0 + MAV.C_p_beta*mav._beta + MAV.C_p_p*MAV.b*p/(2*va) + MAV.C_p_r*MAV.b*r/(2*va) + MAV.C_p_delta_a*delta.aileron + MAV.C_p_delta_r*delta.rudder) - MAV.gamma3*torque_prop
     q_dot = MAV.gamma5*p*r-MAV.gamma6*(p*p-r*r)+thing2*MAV.c/(2*MAV.Jy)*(MAV.C_m_0 + MAV.C_m_alpha*mav._alpha + MAV.C_m_q*MAV.c*q/(2*va) + MAV.C_m_delta_e*delta.elevator)

@@ -6,7 +6,9 @@ Repository Description: Airplane simulation in Python to support ECE 5353 Spring
 
 Releases:
 
-Release 0.0.9 - Chapter 5 part 2 modes calculation and dynamics https://youtu.be/-UonNWmxTEY
+Release 0.0.10 - Yaw Damper, Throttle autopilot and elevator autopilot to maintain alpha beta and speed. https://youtu.be/58fVhihL080
+
+Release 0.0.9 - Chapter 5 part 2 (Saved in Chapter 4.py) modes calculation and dynamics https://youtu.be/-UonNWmxTEY
 
 Release 0.0.8 - Implemented trim function from class with alpha corrected https://youtu.be/6Ij8eEBn7D8 
 

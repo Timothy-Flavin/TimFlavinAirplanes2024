@@ -6,6 +6,8 @@ Repository Description: Airplane simulation in Python to support ECE 5353 Spring
 
 Releases:
 
+Release 0.1.0 - Auto Pilot follows a heading. Pretty neat in my opinion. https://youtu.be/h4aR0TdWqGw 
+
 Release 0.0.10 - Yaw Damper, Throttle autopilot and elevator autopilot to maintain alpha beta and speed. https://youtu.be/58fVhihL080
 
 Release 0.0.9 - Chapter 5 part 2 (Saved in Chapter 4.py) modes calculation and dynamics https://youtu.be/-UonNWmxTEY

@@ -8,11 +8,14 @@ import numpy as np
 
 
 class PIControl:
-    def __init__(self, kp=0.0, ki=0.0, Ts=0.01, limit=1.0, init_integrator=0.0):
+    def __init__(self, kp=0.0, ki=0.0, Ts=0.01, limit=1.0, init_integrator=0.0,lower=None):
         self.kp = kp
         self.ki = ki
         self.Ts = Ts
         self.limit = limit
+        self.lower=-limit
+        if lower is not None:
+            self.lower = lower
         self.integrator = init_integrator
         self.error_delay_1 = 0.0
 
@@ -41,8 +44,8 @@ class PIControl:
         # saturate u at +- self.limit
         if u >= self.limit:
             u_sat = self.limit
-        elif u <= -self.limit:
-            u_sat = -self.limit
+        elif u <= self.lower:
+            u_sat = self.lower
         else:
             u_sat = u
         return u_sat

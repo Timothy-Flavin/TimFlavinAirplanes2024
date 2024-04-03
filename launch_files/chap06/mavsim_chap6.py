@@ -72,11 +72,12 @@ course_command = Signals(dc_offset=np.radians(180),
 
 # initialize the simulation time
 sim_time = SIM.start_time
-end_time = 100
+end_time = 200
 
 from timstuff.trim import do_trim
 delta=MsgDelta()
-delta = do_trim(mav,25,alpha=0)
+delta = do_trim(mav,30,alpha=0)
+print(np.rad2deg(delta.elevator))
 autopilot = Autopilot(delta,mav,SIM.ts_simulation)
 
 input_signal_elevator = Signals(amplitude=0.3, duration=0.3, start_time=5.0)
@@ -86,9 +87,9 @@ print("Press 'Esc' to exit...")
 while sim_time < end_time:
 
     # -------autopilot commands-------------
-    commands.airspeed_command = 27#Va_command.square(sim_time)
-    commands.course_command = 0.04970031369887554#course_command.square(sim_time)
-    commands.altitude_command = altitude_command.square(sim_time)
+    commands.course_command = 180
+    commands.airspeed_command = 30#Va_command.square(sim_time)
+    commands.altitude_command = 2000
 
     # -------autopilot-------------
     estimated_state = mav.true_state  # uses true states in the control

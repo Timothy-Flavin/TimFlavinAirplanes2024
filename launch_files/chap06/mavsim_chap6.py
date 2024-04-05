@@ -58,13 +58,13 @@ mav = MavDynamics(SIM.ts_simulation)
 from message_types.msg_autopilot import MsgAutopilot
 commands = MsgAutopilot()
 Va_command = Signals(dc_offset=25.0,
-                     amplitude=3.0,
-                     start_time=2.0,
-                     frequency=0.01)
-altitude_command = Signals(dc_offset=100.0,
+                     amplitude=0.0,
+                     start_time=5.0,
+                     frequency=0.05)
+altitude_command = Signals(dc_offset=500.0,
                            amplitude=20.0,
-                           start_time=0.0,
-                           frequency=0.02)
+                           start_time=5.0,
+                           frequency=0.05)
 course_command = Signals(dc_offset=np.radians(180),
                          amplitude=np.radians(45),
                          start_time=5.0,
@@ -80,8 +80,9 @@ delta = do_trim(mav,30,alpha=0)
 print(np.rad2deg(delta.elevator))
 autopilot = Autopilot(delta,mav,SIM.ts_simulation)
 
-input_signal_elevator = Signals(amplitude=0.3, duration=0.3, start_time=5.0)
-input_signal_rudder = Signals(amplitude=0.3, duration=0.3, start_time=10.0)
+#input_signal_elevator = Signals(amplitude=0.3, duration=0.3, start_time=5.0)
+#input_signal_rudder = Signals(amplitude=0.3, duration=0.3, start_time=10.0)
+#input_signal_ = Signals(amplitude=0.3, duration=10, start_time=10.0)
 # main simulation loop
 print("Press 'Esc' to exit...")
 while sim_time < end_time:
@@ -89,13 +90,13 @@ while sim_time < end_time:
     # -------autopilot commands-------------
     commands.course_command = 180
     commands.airspeed_command = 30#Va_command.square(sim_time)
-    commands.altitude_command = 2000
+    commands.altitude_command = 1000# altitude_command.square(sim_time)
 
     # -------autopilot-------------
     estimated_state = mav.true_state  # uses true states in the control
     delta, commanded_state = autopilot.update(commands, estimated_state)
-    delta.elevator = delta.elevator+input_signal_elevator.impulse(time=sim_time)
-    delta.rudder = delta.rudder+input_signal_rudder.impulse(time=sim_time)
+    delta.elevator = delta.elevator#+input_signal_elevator.impulse(time=sim_time)
+    delta.rudder = delta.rudder#+input_signal_rudder.impulse(time=sim_time)
     #delta,
     # -------physical system-------------
     current_wind = wind.update()  # get the new wind vector

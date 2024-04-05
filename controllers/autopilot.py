@@ -17,29 +17,29 @@ from controllers.tf_control import TFControl
 from message_types.msg_state import MsgState
 from message_types.msg_delta import MsgDelta
 
-airspeed_throttle_kp=5.0
-airspeed_throttle_ki=0.1
+airspeed_throttle_kp=0.05
+airspeed_throttle_ki=0.05
 
-alpha_elevator_kp = -5.0
-alpha_elevator_ki = -0.0018
-alpha_elevator_kd = -0.5
+alpha_elevator_kp = -20.0
+alpha_elevator_ki = -20.
+alpha_elevator_kd = -1.
 
 yaw_damper_kp = 10.0
 yaw_damper_kd = 1.0
 
-psi_aileron_kp = 0.75
-psi_aileron_ki = 0.02
-psi_aileron_kd = 0.42
+psi_aileron_kp = 0.3
+psi_aileron_ki = 0.05
+psi_aileron_kd = psi_aileron_kp/1
 
-gamma_alpha_kp = 1/5
-gamma_alpha_ki = 0.001
-gamma_alpha_kd = 1/50
+gamma_alpha_kp = 1.2
+gamma_alpha_ki = 0.1
+gamma_alpha_kd = 0#.0001
 
-alt_gamma_kp = 1/40
-alt_gamma_ki = 0.0005
-alt_gamma_kd = alt_gamma_kp/10
+alt_gamma_kp = 0.01
+alt_gamma_ki = 0.001
+alt_gamma_kd = 0.001#alt_gamma_kp/10
 
-chi_psi_kp = 2.0
+chi_psi_kp = 1.0
 chi_psi_ki = 0.0001
 chi_psi_kd = chi_psi_kp/10
 class Autopilot:
@@ -94,7 +94,7 @@ class Autopilot:
             kp=chi_psi_kp,
             ki=chi_psi_ki,
             kd=chi_psi_kd,
-            limit=np.radians(30),
+            limit=np.radians(45),
             Ts=ts_control,
             init_integrator=0,
             )
@@ -146,9 +146,9 @@ class Autopilot:
         delta.throttle=self.throttle_from_airspeed.update(cmd.airspeed_command,state.Va)
 
         gamma = self.gamma_from_altitude.update(cmd.altitude_command,state.altitude)
-        alpha = self.alpha_from_gamma.update(gamma,-state.gamma)
+        alpha = self.alpha_from_gamma.update(gamma,state.gamma)
         
-        delta.elevator = self.elevator_from_alpha.update(state.alpha+alpha, state.alpha)
+        delta.elevator = self.elevator_from_alpha.update(alpha, state.alpha)
         
         #input()
         self.h0=state.altitude
@@ -158,8 +158,12 @@ class Autopilot:
 
         delta.rudder = self.yaw_damper.update(0,state.beta)
         # longitudinal autopilot
-
-        phi = self.psi_from_chi.update(np.radians(cmd.course_command),state.chi)
+        #print(cmd.course_command)
+        course = state.chi
+        if state.chi<0:
+            course+=2*np.pi
+        #print(course)
+        phi = self.psi_from_chi.update(np.radians(cmd.course_command),course)
         delta.aileron = self.aileron_from_psi.update(phi,state.phi)
         # construct control outputs and commanded states
         #print(f"state gamma: {-state.gamma}, command gamma: {gamma}\nAltitude: {state.altitude}, \nalpha command: {alpha},\nelevator: {delta.elevator}\
@@ -167,11 +171,13 @@ class Autopilot:
         #      chi: {state.chi} chi_command: {np.radians(90)}, \n\
         #      psi_command: {phi}, {state.phi}")
         #input()
-        self.commanded_state.altitude = 0
-        self.commanded_state.Va = 0
-        self.commanded_state.phi = 0
+        self.commanded_state.altitude = cmd.altitude_command
+        self.commanded_state.gamma = gamma
+        self.commanded_state.alpha = alpha
+        self.commanded_state.Va = cmd.airspeed_command
+        self.commanded_state.phi = phi
         self.commanded_state.theta = 0
-        self.commanded_state.chi = 0
+        self.commanded_state.chi = np.radians(cmd.course_command)
         return delta, self.commanded_state
 
     def saturate(self, input, low_limit, up_limit):

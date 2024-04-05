@@ -51,7 +51,7 @@ class PIDControl:
             self.integrator = self.integrator \
                               + (self.Ts / self.ki) * (u_sat - u)
         # update the delayed variables
-        self.integrator*=0.99
+        #self.integrator*=0.99
         self.error_delay_1 = error
         self.error_dot_delay_1 = error_dot
         return u_sat

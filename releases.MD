@@ -6,6 +6,7 @@ Repository Description: Airplane simulation in Python to support ECE 5353 Spring
 
 Releases:
 
+Release 0.1.3 - corrected declination to Tulsa, added 
 Release 0.1.2 - Ch7 project sensor noise https://youtu.be/p--xoyGI3fs 
 
 Release 0.1.1 - Tuned Parameters better. https://youtu.be/tIzMSip5lR0

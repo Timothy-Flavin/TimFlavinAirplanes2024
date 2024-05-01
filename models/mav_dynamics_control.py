@@ -237,7 +237,8 @@ class MavDynamics(MavDynamicsForces):
         # simulate magnetometers
         # magnetic field in provo has magnetic declination of 12.5 degrees
         # and magnetic inclination of 66 degrees
-        mi = euler_to_rotation(0,-np.radians(66),np.radians(12)).T@np.array([[1],[0],[0]])
+        # Tulsa 2 degrees east declination heading-2 to get mag heading
+        mi = euler_to_rotation(0,-np.radians(63.56),np.radians(2)).T@np.array([[1],[0],[0]])
         mb = euler_to_rotation(self.true_state.phi,self.true_state.theta,self.true_state.psi).T@mi
 
         self._sensors.mag_x = mb[0,0] + np.random.normal(0,SENSOR.mag_sigma,1)[0]
@@ -250,7 +251,7 @@ class MavDynamics(MavDynamicsForces):
         M  = 0.0289644
         T0 = 288.15
         R  = 8.31432
-        self._sensors.abs_pressure = P0 * (1 - (L0*self.true_state.altitude)/T0)**((MAV.gravity*M)/(R*L0))*3385 + np.random.normal(0,SENSOR.abs_pres_sigma,1)[0]
+        self._sensors.abs_pressure = P0*3385 - (P0 * (1 - (L0*self.true_state.altitude)/T0)**((MAV.gravity*M)/(R*L0))*3385 + np.random.normal(0,SENSOR.abs_pres_sigma,1)[0])
         self._sensors.diff_pressure = MAV.rho*self.true_state.Va**2 / 2.0 + np.random.normal(0,SENSOR.diff_pres_sigma,1)[0]
         
         # simulate GPS sensor

@@ -42,6 +42,34 @@ alt_gamma_kd = 0.001#alt_gamma_kp/10
 chi_psi_kp = 1.0
 chi_psi_ki = 0.0001
 chi_psi_kd = chi_psi_kp/10
+
+if True:
+    airspeed_throttle_kp=0.05
+    airspeed_throttle_ki=0.05
+
+    alpha_elevator_kp = -5.0
+    alpha_elevator_ki = -5.
+    alpha_elevator_kd = -1.
+
+    yaw_damper_kp = 10.0
+    yaw_damper_kd = 1.0
+
+    psi_aileron_kp = 0.3
+    psi_aileron_ki = 0.05
+    psi_aileron_kd = psi_aileron_kp/1
+
+    gamma_alpha_kp = 1.2
+    gamma_alpha_ki = 0.1
+    gamma_alpha_kd = 0#.0001
+
+    alt_gamma_kp = 0.01
+    alt_gamma_ki = 0.001
+    alt_gamma_kd = 0.005#alt_gamma_kp/10
+
+    chi_psi_kp = 1.0
+    chi_psi_ki = 0.0001
+    chi_psi_kd = chi_psi_kp/10
+
 class Autopilot:
     def __init__(self, delta, mav:MavDynamics, ts_control):
 
@@ -139,6 +167,7 @@ class Autopilot:
         self.commanded_state = MsgState()
 
     def update(self, cmd, state:MsgState):
+        last_alpha = self.commanded_state.alpha
         #print(cmd.airspeed_command)
         #print(state.alpha)
         #input()
@@ -148,7 +177,7 @@ class Autopilot:
         gamma = self.gamma_from_altitude.update(cmd.altitude_command,state.altitude)
         alpha = self.alpha_from_gamma.update(gamma,state.gamma)
         
-        delta.elevator = self.elevator_from_alpha.update(alpha, state.alpha)
+        delta.elevator = self.elevator_from_alpha.update(0.1*alpha+0.9*last_alpha, state.alpha)
         
         #input()
         self.h0=state.altitude
@@ -160,10 +189,14 @@ class Autopilot:
         # longitudinal autopilot
         #print(cmd.course_command)
         course = state.chi
-        if state.chi<0:
-            course+=2*np.pi
+        rad_course_command = np.radians(cmd.course_command)
+        arr = np.array([course-2*np.pi, course, course+2*np.pi])
+        mindiff_i = np.argmin(np.abs(arr-course))
+        course = arr[mindiff_i]
+        #if state.chi<0:
+        #    course+=2*np.pi
         #print(course)
-        phi = self.psi_from_chi.update(np.radians(cmd.course_command),course)
+        phi = self.psi_from_chi.update(rad_course_command,course)
         delta.aileron = self.aileron_from_psi.update(phi,state.phi)
         # construct control outputs and commanded states
         #print(f"state gamma: {-state.gamma}, command gamma: {gamma}\nAltitude: {state.altitude}, \nalpha command: {alpha},\nelevator: {delta.elevator}\
@@ -173,7 +206,7 @@ class Autopilot:
         #input()
         self.commanded_state.altitude = cmd.altitude_command
         self.commanded_state.gamma = gamma
-        self.commanded_state.alpha = alpha
+        self.commanded_state.alpha = 0.1*alpha+0.9*last_alpha
         self.commanded_state.Va = cmd.airspeed_command
         self.commanded_state.phi = phi
         self.commanded_state.theta = 0

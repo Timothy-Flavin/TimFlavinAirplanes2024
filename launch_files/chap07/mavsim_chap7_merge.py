@@ -103,9 +103,9 @@ while sim_time < end_time:
     # -------autopilot-------------
     estimated_state = mav.true_state  # uses true states in the control
     delta, commanded_state = autopilot.update(commands, estimated_state)
-    delta.elevator = delta.elevator#+input_signal_elevator.impulse(time=sim_time)
-    delta.rudder = delta.rudder#+input_signal_rudder.impulse(time=sim_time)
-    
+    #delta.elevator = delta.elevator#+input_signal_elevator.impulse(time=sim_time)
+    #delta.rudder = delta.rudder#+input_signal_rudder.impulse(time=sim_time)
+    #delta.aileron = delta.aileron
     #delta,
     # -------physical system-------------
     current_wind = wind.update()  # get the new wind vector
